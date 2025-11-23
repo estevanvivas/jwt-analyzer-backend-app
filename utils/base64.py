@@ -12,13 +12,13 @@ def encode_base64_url(data: Union[str, bytes]) -> str:
 
     bits = ''.join(f'{byte:08b}' for byte in data_bytes)
     b64_standard = b64_encode_tm.read_input(bits).tape.get_symbols_as_str().replace("_", "")
-    b64_url = b64_standard.replace("+", "-").replace("/", ".").rstrip("=")
+    b64_url = b64_standard.replace("+", "-").replace("/", "_").rstrip("=")
     return b64_url
 
 
 def decode_base64_url(encoded_data: str) -> str:
     try:
-        b64_standard = encoded_data.replace("-", "+").replace(".", "/")
+        b64_standard = encoded_data.replace("-", "+").replace("_", "/")
         b64_standard = _add_padding(b64_standard)
 
         decoded_bytes = base64.b64decode(b64_standard)
