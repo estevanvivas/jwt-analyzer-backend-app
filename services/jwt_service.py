@@ -155,10 +155,13 @@ class JwtService:
         base64url_pattern = re.compile(r'^[A-Za-z0-9_-]+$')
 
         if not base64url_pattern.match(header_seg):
-            errors.append("El segmento header contiene caracteres inválidos para base64url")
+            errors.append("El segmento header no es una cadena codificada en base64url")
 
         if not base64url_pattern.match(payload_seg):
-            errors.append("El segmento payload contiene caracteres inválidos para base64url")
+            errors.append("el segmento payload no es una cadena codificada en base64url")
+
+        if not base64url_pattern.match(signature_seg):
+            errors.append("El segmento signature no es una cadena codificada en base64url")
 
         if errors:
             return {"segments": segments, "errors": errors}
