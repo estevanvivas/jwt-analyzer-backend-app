@@ -24,11 +24,12 @@ class JwtService:
 
     def create_signature_hmac(self, message: str, secret: str, alg: SigningAlgorithm) -> str:
         hash_function = alg.get_hash_function()
-        return hmac.new(
+        raw_sig = hmac.new(
             secret.encode(),
             message.encode(),
             hash_function
-        ).hexdigest()
+        ).digest()
+        return encode_base64_url(raw_sig)
 
     def build_token(self, header: JsonObject, payload: JsonObject, secret_key: str) -> TokenCreationResult:
         encoded_header = encode_base64_url(json.dumps(header, separators=(',', ':')))
@@ -36,18 +37,18 @@ class JwtService:
 
         algorithm = SigningAlgorithm(header.get("alg"))
 
-        signature = self.create_signature_hmac(
+        encoded_signature = self.create_signature_hmac(
             message=f"{encoded_header}.{encoded_payload}",
             secret=secret_key,
             alg=algorithm
         )
 
         return {
-            "token": f"{encoded_header}.{encoded_payload}.{signature}",
+            "token": f"{encoded_header}.{encoded_payload}.{encoded_signature}",
             "parts": {
                 "header": encoded_header,
                 "payload": encoded_payload,
-                "signature": signature
+                "signature": encoded_signature
             }
         }
 
