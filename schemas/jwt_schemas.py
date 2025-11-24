@@ -75,22 +75,20 @@ class PayloadSchema(Schema):
     iss = fields.Str(
         required=False,
         allow_none=False,
-        validate=validate.Length(min=1),
+        validate=validate.Length(min=1, error='El campo "iss" no puede estar vacío.'),
         error_messages={
             "invalid": 'El campo "iss" debe ser una cadena válida.',
-            "null": 'El campo "iss" no puede ser nulo.',
-            "validator_failed": 'El campo "iss" no puede estar vacío.'
+            "null": 'El campo "iss" no puede ser nulo.'
         }
     )
 
     sub = fields.Str(
         required=False,
         allow_none=False,
-        validate=validate.Length(min=1),
+        validate=validate.Length(min=1, error='El campo "sub" no puede estar vacío.'),
         error_messages={
             "invalid": 'El campo "sub" debe ser una cadena válida.',
-            "null": 'El campo "sub" no puede ser nulo.',
-            "validator_failed": 'El campo "sub" no puede estar vacío.'
+            "null": 'El campo "sub" no puede ser nulo.'
         }
     )
 
@@ -131,10 +129,9 @@ class PayloadSchema(Schema):
     jti = fields.Str(
         required=False,
         allow_none=False,
-        validate=validate.Length(min=1),
+        validate=validate.Length(min=1, error='El campo "jti" no puede estar vacío.'),
         error_messages={
             "invalid": 'El campo "jti" debe ser una cadena válida.',
-            "null": 'El campo "jti" no puede ser nulo.',
-            "validator_failed": 'El campo "jti" no puede estar vacío.'
+            "null": 'El campo "jti" no puede ser nulo.'
         }
     )
