@@ -171,8 +171,6 @@ class JwtService:
             "payload": decode_base64_url(payload_seg)
         }
 
-        print(decoded)
-
         return {"errors": errors, "segments": segments, "decoded": decoded}
 
     def semantic_analysis(self, parsed_header: JsonObject, parsed_payload: JsonObject) -> SemanticAnalysisResult:

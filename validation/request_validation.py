@@ -21,12 +21,9 @@ def validate_req_body(schema_class: Type[Schema]):
                     status=HTTPStatus.BAD_REQUEST
                 )
 
-            print(data)
-
             try:
                 schema = schema_class()
                 validated = schema.load(data)
-                print(schema)
             except ValidationError as e:
                 return error_response(
                     message="Error de validación en el cuerpo de la solicitud",
