@@ -166,9 +166,35 @@ class JwtService:
         if errors:
             return {"segments": segments, "errors": errors}
 
+        decoded_header = None
+        try:
+            decoded_header = decode_base64_url(header_seg)
+        except ValueError:
+            errors.append(
+                "El segmento header no contiene texto UTF-8 válido. El token puede estar corrupto o no ser un JWT estándar.")
+
+        decoded_payload = None
+        try:
+            decoded_payload = decode_base64_url(payload_seg)
+        except ValueError:
+            errors.append(
+                "El segmento payload no contiene texto UTF-8 válido. El token puede estar corrupto o no ser un JWT estándar.")
+
+        try:
+            decode_base64_url(signature_seg)
+        except ValueError:
+            errors.append(
+                "El segmento signature no contiene datos binarios válidos codificados en base64url. El token puede estar corrupto o no ser un JWT estándar.")
+
+        if decoded_header is None or decoded_payload is None:
+            if len(errors) == 0:
+                errors.append("Error desconocido al decodificar los segmentos del token.")
+
+            return {"segments": segments, "errors": errors}
+
         decoded: DecodedComponents = {
-            "header": decode_base64_url(header_seg),
-            "payload": decode_base64_url(payload_seg)
+            "header": decoded_header,
+            "payload": decoded_payload
         }
 
         return {"errors": errors, "segments": segments, "decoded": decoded}
