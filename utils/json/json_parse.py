@@ -62,7 +62,7 @@ def _translate_error_message(original_message: str) -> str:
     return original_message
 
 
-def _build_error_context(text: str, line: int, column: int, position: int, context_margin: int = 40) -> str:
+def _build_error_context(text: str, line: int, column: int, context_margin: int = 15) -> str:
     lines = text.splitlines()
 
     if 0 <= line - 1 < len(lines):
@@ -70,21 +70,22 @@ def _build_error_context(text: str, line: int, column: int, position: int, conte
     else:
         line_text = ""
 
-    pointer = (" " * (column - 1)) + "^"
+    start_pos = max(0, column - 1 - context_margin)
+    end_pos = min(len(line_text), column - 1 + context_margin)
 
-    start_ctx = max(0, position - context_margin)
-    end_ctx = min(len(text), position + context_margin)
-    context_snippet = text[start_ctx:end_ctx]
+    line_fragment = line_text[start_pos:end_pos]
 
-    if start_ctx > 0:
-        context_snippet = "..." + context_snippet
-    if end_ctx < len(text):
-        context_snippet = context_snippet + "..."
+    pointer_position = (column - 1) - start_pos
+    pointer = (" " * pointer_position) + "^"
+
+    if start_pos > 0:
+        line_fragment = "..." + line_fragment
+        pointer = "   " + pointer
+    if end_pos < len(line_text):
+        line_fragment = line_fragment + "..."
 
     context_parts = [
-        f"Contexto: {context_snippet}",
-        f"Línea {line}, Columna {column}:",
-        line_text,
+        line_fragment,
         pointer
     ]
 
@@ -107,7 +108,7 @@ def parse_json(text: str) -> JsonParseResult:
         column = e.colno
         position = e.pos
 
-        context = _build_error_context(text, line, column, position)
+        context = _build_error_context(text, line, column)
 
         error = JsonParseError(
             message=translated_message,
