@@ -179,7 +179,7 @@ class JwtService:
             "payload": self._semantic_analysis_segment(parsed_payload, schema=PayloadSchema)
         }
 
-        if parsed_payload.get("exp", None) is not None:
+        if parsed_payload.get("exp", None) is not None and isinstance(parsed_payload["exp"], int):
             expiration = datetime.fromtimestamp(parsed_payload["exp"]).strftime("%Y-%m-%d %H:%M:%S")
             expired = int(time.time()) >= parsed_payload["exp"]
 
